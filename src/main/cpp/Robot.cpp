@@ -3,8 +3,11 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "Robot.h"
+#include <frc/Joystick.h>
 using namespace ctre::phoenix::motorcontrol::can;
 using namespace ctre::phoenix::motorcontrol;
+
+frc::Joystick controller(0);
 
 void Robot::RobotInit()
 {
@@ -32,6 +35,11 @@ void Robot::RobotInit()
             tfx->ConfigSupplyCurrentLimit(low_limit);
         }
     }
+
+    motor_map[MotorID::FrontIntakeMotor]->SetInverted(true);
+    motor_map[MotorID::TunnelBeltMotor]->SetInverted(true);
+    motor_map[MotorID::UptakeMotor]->SetInverted(true);
+    motor_map[MotorID::ShooterMotorFollower]->SetInverted(InvertType::OpposeMaster);
 }
 
 void Robot::RobotPeriodic() {}
@@ -40,7 +48,30 @@ void Robot::AutonomousInit() {}
 void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {}
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic()
+{
+    if (controller.GetRawButton(2))
+    {
+        motor_map[MotorID::FrontIntakeMotor]->Set(ControlMode::PercentOutput, 1);
+        motor_map[MotorID::TunnelBeltMotor]->Set(ControlMode::PercentOutput, 1);
+        motor_map[MotorID::UptakeMotor]->Set(ControlMode::PercentOutput, 1);
+        motor_map[MotorID::ShooterMotor]->Set(ControlMode::PercentOutput, 0.55);
+    }
+    else if (controller.GetRawButton(3))
+    {
+        motor_map[MotorID::FrontIntakeMotor]->Set(ControlMode::PercentOutput, -1);
+        motor_map[MotorID::TunnelBeltMotor]->Set(ControlMode::PercentOutput, -1);
+        motor_map[MotorID::UptakeMotor]->Set(ControlMode::PercentOutput, -1);
+        motor_map[MotorID::ShooterMotor]->Set(ControlMode::PercentOutput, 0);
+    }
+    else
+    {
+        for (auto m : motor_map)
+        {
+            m.second->Set(ControlMode::PercentOutput, 0);
+        }
+    }
+}
 
 void Robot::DisabledInit() {}
 void Robot::DisabledPeriodic() {}
