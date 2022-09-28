@@ -4,10 +4,16 @@
 
 #include "Robot.h"
 #include <frc/Joystick.h>
+#include <frc/Compressor.h>
+#include <frc/Solenoid.h>
 using namespace ctre::phoenix::motorcontrol::can;
 using namespace ctre::phoenix::motorcontrol;
 
 frc::Joystick controller(0);
+frc::Compressor compressor(frc::PneumaticsModuleType::CTREPCM);
+frc::Solenoid intake_solenoid(frc::PneumaticsModuleType::CTREPCM, 3);
+frc::Solenoid lower_hardstop_solenoid(frc::PneumaticsModuleType::CTREPCM, 0);
+frc::Solenoid upper_hardstop_solenoid(frc::PneumaticsModuleType::CTREPCM, 5);
 
 void Robot::RobotInit()
 {
@@ -47,9 +53,17 @@ void Robot::RobotPeriodic() {}
 void Robot::AutonomousInit() {}
 void Robot::AutonomousPeriodic() {}
 
-void Robot::TeleopInit() {}
+void Robot::TeleopInit()
+{
+    compressor.EnableDigital();
+}
+
 void Robot::TeleopPeriodic()
 {
+    intake_solenoid.Set(true);
+    lower_hardstop_solenoid.Set(false);
+    upper_hardstop_solenoid.Set(true);
+
     if (controller.GetRawButton(2))
     {
         motor_map[MotorID::FrontIntakeMotor]->Set(ControlMode::PercentOutput, 1);
