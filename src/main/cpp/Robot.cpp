@@ -66,17 +66,23 @@ void Robot::TeleopPeriodic()
 
     if (controller.GetRawButton(2))
     {
-        motor_map[MotorID::FrontIntakeMotor]->Set(ControlMode::PercentOutput, 1);
-        motor_map[MotorID::TunnelBeltMotor]->Set(ControlMode::PercentOutput, 1);
-        motor_map[MotorID::UptakeMotor]->Set(ControlMode::PercentOutput, 1);
-        motor_map[MotorID::ShooterMotor]->Set(ControlMode::PercentOutput, 0.55);
+        if (compressor.GetPressureSwitchValue())
+        {
+            motor_map[MotorID::FrontIntakeMotor]->Set(ControlMode::PercentOutput, 0.75);
+            motor_map[MotorID::TunnelBeltMotor]->Set(ControlMode::PercentOutput, 0.65);
+            motor_map[MotorID::UptakeMotor]->Set(ControlMode::PercentOutput, 0.75);
+            motor_map[MotorID::ShooterMotor]->Set(ControlMode::PercentOutput, 0.75);
+        }
     }
     else if (controller.GetRawButton(3))
     {
-        motor_map[MotorID::FrontIntakeMotor]->Set(ControlMode::PercentOutput, -1);
-        motor_map[MotorID::TunnelBeltMotor]->Set(ControlMode::PercentOutput, -1);
-        motor_map[MotorID::UptakeMotor]->Set(ControlMode::PercentOutput, -1);
-        motor_map[MotorID::ShooterMotor]->Set(ControlMode::PercentOutput, 0);
+        if (compressor.GetPressureSwitchValue())
+        {
+            motor_map[MotorID::FrontIntakeMotor]->Set(ControlMode::PercentOutput, -1);
+            motor_map[MotorID::TunnelBeltMotor]->Set(ControlMode::PercentOutput, -1);
+            motor_map[MotorID::UptakeMotor]->Set(ControlMode::PercentOutput, -1);
+            motor_map[MotorID::ShooterMotor]->Set(ControlMode::PercentOutput, 0);
+        }
     }
     else
     {
